@@ -8,7 +8,6 @@ Simple object module dispatcher. Performs a recursive loop over the object prope
 ```js
 var OD = new ObjectDispatcher('app');
 OD.module('index', {
-
 	//no _init function for top-level: checked if module with current moduleId exists
 	//(by default: #module-[moduleId], in this case #module-index)
 	//see the options for more info about prepending/appending to the selector
@@ -17,19 +16,19 @@ OD.module('index', {
 		console.log('test: yes');
 	},
 
-	//starting with _ - no automatic dispatch
+	//starting with "_" - no automatic dispatch (must be invoked manually, e.g. in an _init function)
 	_testNo: function() {
 		console.log('test: no');
 	},
 
 	//submodule
-	testIndex: {
+	testSubIndex: {
 		//manual check - if returns truthy value, becomes dispatched
 		_init: function() {
 			return OD.isModule('index');	//checks if an element that matches "#module-index" selector exists
 		},
-		testIndex1: function() {
-			console.log('testsubIndex: yes');
+		testSubIndex1: function() {
+			console.log('testSubIndex1: yes');
 		}
 	},
 
@@ -46,6 +45,7 @@ OD.module('index', {
 			console.log('testSub2: yes');
 		},
 		testSub3: {
+			//if _init function is defined, it must return a truthy value to perform dispatching
 			_init: function() {
 				this._testSub32();
 			},
@@ -86,16 +86,15 @@ OD.module('index', {
 
 //run dispatcher
 OD.dispatch();
+OD.module('index').test();
 ```
 
 Assuming HTML:
 
 ```html
-...
 <div id="module-index">
 	...
 </div>
-...
 ```
 
 ## Options
