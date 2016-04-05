@@ -85,7 +85,7 @@ OD.module('index', {
 
   //layout
   testLayout: {
-    //guaranteed to be invoked only once (useful e.g. for SPA layout common code)
+    //guaranteed to be dispatched only once (useful e.g. for SPA layout common code)
     _times: 1,
 
     testLayout1: function() {
@@ -97,7 +97,7 @@ OD.module('index', {
 //run dispatcher
 OD.dispatch();
 
-//run a specified method manually
+//access a specified method manually
 OD.module('index').testSub.testSub3._testSub32();
 ```
 
