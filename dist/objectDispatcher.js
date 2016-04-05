@@ -15,7 +15,7 @@
       //module check options
       isModule: {
         //pass a function to replace standard behavior
-        body: false,
+        fn: false,
         //prepended to tested selector
         prepend: '#module-',
         //appended to tested selector
@@ -68,11 +68,11 @@
 
   //returns true if an element with id (string) or one of ids (Array) is found; pass force not to prepend and append anything to the selector
   ObjectDispatcher.prototype.isModule = function(id, force) {
-    var replaceFn = this.settings.isModule.body;
+    var replaceFn = this.settings.isModule.fn;
     if (replaceFn) {
       if (typeof replaceFn !== 'function')
         throw new OdException('expected function, ' + typeof replaceFn + ' given');
-      return replaceFn.call(this, id);
+      return replaceFn.call(this, id, force);
     }
     if (!force) {
       id = this.settings.isModule.prepend + id + this.settings.isModule.append;

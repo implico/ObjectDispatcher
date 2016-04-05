@@ -119,7 +119,7 @@ var options = {
   //module check options
   isModule: {
     //pass a function to replace standard behavior
-    body: false,
+    fn: false,
     //prepended to tested selector
     prepend: '#module-',
     //appended to tested selector
