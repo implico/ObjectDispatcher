@@ -9,7 +9,9 @@ Simple object module dispatcher. Performs a recursive loop over the object prope
 var OD = new ObjectDispatcher('app');
 OD.module('index', {
 
-	//no _init function for top-level: checked if module with id = index exists (by default: #module-[moduleId], in this case #module-index)
+	//no _init function for top-level: checked if module with current moduleId exists
+	//(by default: #module-[moduleId], in this case #module-index)
+	//see the options for more info about prepending/appending to the selector
 
 	test: function() {
 		console.log('test: yes');
@@ -24,9 +26,9 @@ OD.module('index', {
 	testIndex: {
 		//manual check - if returns truthy value, becomes dispatched
 		_init: function() {
-			return OD.isModule('index');	//checks if an element that matches #module-index selector exists
+			return OD.isModule('index');	//checks if an element that matches "#module-index" selector exists
 		},
-		testSub41: function() {
+		testIndex1: function() {
 			console.log('testsubIndex: yes');
 		}
 	},

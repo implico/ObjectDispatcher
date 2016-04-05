@@ -5,7 +5,7 @@
 
 	@author bartosz.sak@gmail.com
 	@license MIT
-	
+
 */
 (function(window, document) {
 
@@ -92,9 +92,9 @@
 
   //performs dispatching
   //for top-level modules, if _init function is not set, an ObjectDispatcher.isModule(moduleId) is assumed
-  //if _init function is set, must return truthy value to start function walk
-  //if _init function isnot set or returns a truthy value, the function walk starts
-  //functions with keys starting with _ are skipped in function walk
+  //if _init function is set, must return truthy value to start dispatching
+  //if _init function isnot set or returns a truthy value, the dispatching starts
+  //functions with keys starting with "_" are skipped in dispatching
 	ObjectDispatcher.prototype.dispatch = function(obj, objKey, depth, moduleId) {
 		if (typeof obj === 'undefined') {
 			this.dispatch(this.modules, null, 0);
