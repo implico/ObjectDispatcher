@@ -81,7 +81,17 @@ OD.module('index', {
         console.log('testmod3: yes', variable);
       }
     }
-  })()
+  })(),
+
+  //layout
+  testLayout: {
+    //guaranteed to be invoked only once (useful e.g. for SPA layout common code)
+    _times: 1,
+
+    testLayout1: function() {
+      console.log('testLayout1: yes (only once!)');
+    }
+  }  
 });
 
 //run dispatcher

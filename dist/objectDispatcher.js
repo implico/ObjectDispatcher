@@ -95,6 +95,7 @@
   //for top-level modules: if _init function is not set, return value of this.isModule(moduleId) is assumed
   //for submodules (lower-level): if _init function is not set, true is assumed
   //functions and objects with keys starting with "_" are skipped in dispatching
+  //if you provide a _times property with a number value of X, the module will be initialized max. X times (e.g. for SPA layout code)
   ObjectDispatcher.prototype.dispatch = function(obj, objKey, depth, moduleId) {
     if (typeof obj === 'undefined') {
       this.dispatch(this.modules, null, 0);
@@ -107,15 +108,20 @@
             || ((depth > 1) && (typeof obj['_init'] === 'undefined'))
             || ((typeof obj['_init'] === 'function') && obj['_init']())
             || ((typeof obj['_init'] !== 'function') && obj['_init'])) {
-      for (var key in obj) {
-        if (!obj.hasOwnProperty(key) || (key == '_init'))
-          continue;
-        if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
-          if (obj[key] && (typeof obj[key] === 'object')) {
-            this.dispatch(obj[key], key, depth + 1, depth == 0 ? key : moduleId);
-          }
-          else if (typeof obj[key] === 'function') {
-            obj[key]();
+
+      if ((depth == 0) || (typeof obj._times === 'undefined') || ((typeof obj._times === 'number') && (--obj._times >= 0))) {
+        if (obj._times < 0)
+          obj._times = 0;
+        for (var key in obj) {
+          if (!obj.hasOwnProperty(key) || (key == '_init'))
+            continue;
+          if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
+            if (obj[key] && (typeof obj[key] === 'object')) {
+              this.dispatch(obj[key], key, depth + 1, depth == 0 ? key : moduleId);
+            }
+            else if (typeof obj[key] === 'function') {
+              obj[key]();
+            }
           }
         }
       }
