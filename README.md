@@ -1,4 +1,4 @@
-# objectDispatcher
+# ObjectDispatcher
 Simple object module dispatcher. Performs a recursive loop over defined module(s) object properties.
 
 ## Example
