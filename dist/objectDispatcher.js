@@ -30,6 +30,8 @@
     this.id = id;
     this.modules = {};
     ObjectDispatcher.apps[id] = this;
+
+    return this;
   }
 
   ObjectDispatcher.apps = {};
@@ -90,15 +92,26 @@
     return isCurrent ? id : false;
   }
 
+
   //performs dispatching
+  //by default, the initial run is wrapped in setTimeout(0) to force run at the end of the queue; pass false to start dispatching instantly
+
   //if _init function is set, must return truthy value to start dispatching
   //for top-level modules: if _init function is not set, return value of this.isModule(moduleId) is assumed
   //for submodules (lower-level): if _init function is not set, true is assumed
   //functions and objects with keys starting with "_" are skipped in dispatching
   //if you provide a _times property with a number value of X, the module will be initialized max. X times (e.g. for SPA layout code)
-  ObjectDispatcher.prototype.dispatch = function(obj, objKey, depth, moduleId) {
+  ObjectDispatcher.prototype.dispatch = function(useTimeout, obj, objKey, depth, moduleId) {
+    var _this = this;
     if (typeof obj === 'undefined') {
-      this.dispatch(this.modules, null, 0);
+      if (useTimeout) {
+        setTimeout(function() {
+          _this.dispatch(false, _this.modules, null, 0);
+        }, 0);
+      }
+      else this.dispatch(false, _this.modules, null, 0);
+
+      return this;
     }
     else if (!obj || (typeof obj !== 'object')) {
       throw new OdException('expected object, ' + typeof obj + ' given (moduleId: ' + moduleId + ', key: ' + objKey + ')');
@@ -117,7 +130,7 @@
             continue;
           if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
             if (obj[key] && (typeof obj[key] === 'object')) {
-              this.dispatch(obj[key], key, depth + 1, depth == 0 ? key : moduleId);
+              this.dispatch(false, obj[key], key, depth + 1, depth == 0 ? key : moduleId);
             }
             else if (typeof obj[key] === 'function') {
               obj[key]();

@@ -6,7 +6,8 @@ Simple object module dispatcher. Performs a recursive loop over defined module(s
 "test: yes" will appear, the other not.
 
 ```js
-var OD = new ObjectDispatcher('app');
+//first, create the ObjectDisatcher instance
+var OD = new ObjectDispatcher('app').dispatch();
 OD.module('index', {
   //no _init function for top-level: checked if module with current moduleId exists
   //(by default: #module-[moduleId], in this case #module-index)
@@ -108,6 +109,19 @@ Assuming HTML:
   ...
 </div>
 ```
+
+## Calling dispatch at the beginning
+
+Dispatch can be called at the object creation. If you pass `true` as the first parameter, it will be internally wrapped in `setTimeout(0)` to run it at the end of the queue (when all modules are ready). This is useful when you keep module definitions in separate files, and do not know when all of them are already registered.
+
+So, the first line of the example could look like this:
+
+```js
+var OD = new ObjectDispatcher('app').dispatch(true);
+```
+
+Of course, the "run dispatcher" line at the end of the example should be then removed.
+
 
 ## Options
 
