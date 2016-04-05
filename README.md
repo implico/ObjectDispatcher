@@ -34,7 +34,7 @@ OD.module('index', {
 
   //submodule
   testSub: {
-    //no _init for lower level: always dispatched
+    //no _init for submodule: always dispatched
 
     variable: 1,
 
