@@ -86,7 +86,9 @@ OD.module('index', {
 
 //run dispatcher
 OD.dispatch();
-OD.module('index').test();
+
+//run a specified method manually
+OD.module('index').testSub.testSub3._testSub32();
 ```
 
 Assuming HTML:
