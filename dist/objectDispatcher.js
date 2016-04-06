@@ -96,9 +96,9 @@
   //performs dispatching
   //by default, the initial run is wrapped in setTimeout(0) to force run at the end of the queue; pass false to start dispatching instantly
 
-  //if _init function is set, must return truthy value to start dispatching
-  //for top-level modules: if _init function is not set, return value of this.isModule(moduleId) is assumed
-  //for submodules (lower-level): if _init function is not set, true is assumed
+  //if __init function is set, must return truthy value to start dispatching
+  //for top-level modules: if __init function is not set, return value of this.isModule(moduleId) is assumed
+  //for submodules (lower-level): if __init function is not set, true is assumed
   //functions and objects with keys starting with "_" are skipped in dispatching
   //if you provide a _times property with a number value of X, the module will be initialized max. X times (e.g. for SPA layout code)
   ObjectDispatcher.prototype.dispatch = function(useTimeout, obj, objKey, depth, moduleId) {
@@ -117,16 +117,16 @@
       throw new OdException('expected object, ' + typeof obj + ' given (moduleId: ' + moduleId + ', key: ' + objKey + ')');
     }
     else if   ((depth == 0)
-            || ((depth == 1) && (typeof obj['_init'] === 'undefined') && this.isModule(objKey))
-            || ((depth > 1) && (typeof obj['_init'] === 'undefined'))
-            || ((typeof obj['_init'] === 'function') && obj['_init']())
-            || ((typeof obj['_init'] !== 'function') && obj['_init'])) {
+            || ((depth == 1) && (typeof obj['__init'] === 'undefined') && this.isModule(objKey))
+            || ((depth > 1) && (typeof obj['__init'] === 'undefined'))
+            || ((typeof obj['__init'] === 'function') && obj['__init']())
+            || ((typeof obj['__init'] !== 'function') && obj['__init'])) {
 
       if ((depth == 0) || (typeof obj._times === 'undefined') || ((typeof obj._times === 'number') && (--obj._times >= 0))) {
         if (obj._times < 0)
           obj._times = 0;
         for (var key in obj) {
-          if (!obj.hasOwnProperty(key) || (key == '_init'))
+          if (!obj.hasOwnProperty(key) || (key == '__init'))
             continue;
           if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
             if (obj[key] && (typeof obj[key] === 'object')) {

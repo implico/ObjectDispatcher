@@ -9,7 +9,7 @@ Simple object module dispatcher. Performs a recursive loop over defined module(s
 //first, create the ObjectDisatcher instance
 var OD = new ObjectDispatcher('app').dispatch();
 OD.module('index', {
-  //no _init function for top-level: checked if module with current moduleId exists
+  //no __init function (notice double underscore) for top-level: checked if module with current moduleId exists
   //(by default: #module-[moduleId], in this case #module-index)
   //see the options for more info about prepending/appending to the selector
 
@@ -17,7 +17,7 @@ OD.module('index', {
     console.log('test: yes');
   },
 
-  //starting with "_" - no automatic dispatch (must be invoked manually, e.g. in an _init function)
+  //starting with "_" - no automatic dispatch (must be invoked manually, e.g. in an __init function)
   _testNo: function() {
     console.log('test: no');
   },
@@ -25,7 +25,7 @@ OD.module('index', {
   //submodule
   testSubIndex: {
     //manual check - if returns truthy value, becomes dispatched
-    _init: function() {
+    __init: function() {
       return OD.isModule('index');  //checks if an element that matches "#module-index" selector exists
     },
     testSubIndex1: function() {
@@ -35,7 +35,7 @@ OD.module('index', {
 
   //submodule
   testSub: {
-    //no _init function for submodule - always dispatched
+    //no __init function for submodule - always dispatched
 
     variable: 1,
 
@@ -46,8 +46,8 @@ OD.module('index', {
       console.log('testSub2: yes');
     },
     testSub3: {
-      //if _init function is defined, it must return a truthy value to perform dispatching
-      _init: function() {
+      //if __init function is defined, it must return a truthy value to perform dispatching
+      __init: function() {
         this._testSub32();
       },
       testSub31: function() {
@@ -58,7 +58,7 @@ OD.module('index', {
       }
     },
     testSub4: {
-      _init: function() {
+      __init: function() {
         return OD.isModule(['not-exists', 'not-exists-2']);
       },
       testSub41: function() {
