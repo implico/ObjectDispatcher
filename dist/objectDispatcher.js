@@ -100,16 +100,16 @@
   //for top-level modules: if __init function is not set, return value of this.isModule(moduleId) is assumed
   //for submodules (lower-level): if __init function is not set, true is assumed
   //functions and objects with keys starting with "_" are skipped in dispatching
-  //if you provide a _times property with a number value of X, the module will be initialized max. X times (e.g. for SPA layout code)
-  ObjectDispatcher.prototype.dispatch = function(useTimeout, obj, objKey, depth, moduleId) {
+  //if you provide a __once property with true value, the module will be initialized only once (e.g. for SPA layout code)
+  ObjectDispatcher.prototype.dispatch = function(useTimeout, data, obj, objKey, depth, moduleId) {
     var _this = this;
     if (typeof obj === 'undefined') {
       if (useTimeout) {
         setTimeout(function() {
-          _this.dispatch(false, _this.modules, null, 0);
+          _this.dispatch(false, data, _this.modules, null, 0);
         }, 0);
       }
-      else this.dispatch(false, _this.modules, null, 0);
+      else this.dispatch(false, data, _this.modules, null, 0);
 
       return this;
     }
@@ -119,18 +119,21 @@
     else if   ((depth == 0)
             || ((depth == 1) && (typeof obj['__init'] === 'undefined') && this.isModule(objKey))
             || ((depth > 1) && (typeof obj['__init'] === 'undefined'))
-            || ((typeof obj['__init'] === 'function') && obj['__init']())
+            || ((typeof obj['__init'] === 'function') && obj['__init'](data))
             || ((typeof obj['__init'] !== 'function') && obj['__init'])) {
 
-      if ((depth == 0) || (typeof obj._times === 'undefined') || ((typeof obj._times === 'number') && (--obj._times >= 0))) {
-        if (obj._times < 0)
-          obj._times = 0;
+      if ((typeof obj.__once !== 'undefined') && (typeof obj.__once !== 'number'))
+        obj.__once = obj.__once ? 1 : 0;
+
+      if ((depth == 0) || (typeof obj.__once === 'undefined') || (--obj.__once >= 0)) {
+        if (obj.__once && (obj.__once < 0))
+          obj.__once = 0;
         for (var key in obj) {
           if (!obj.hasOwnProperty(key) || (key == '__init'))
             continue;
           if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
             if (obj[key] && (typeof obj[key] === 'object')) {
-              this.dispatch(false, obj[key], key, depth + 1, depth == 0 ? key : moduleId);
+              this.dispatch(false, data, obj[key], key, depth + 1, depth == 0 ? key : moduleId);
             }
             else if (typeof obj[key] === 'function') {
               obj[key]();

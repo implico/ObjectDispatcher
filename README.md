@@ -7,7 +7,7 @@ Simple object module dispatcher. Performs a recursive loop over defined module(s
 
 ```js
 //first, create the ObjectDisatcher instance
-var OD = new ObjectDispatcher('app').dispatch();
+var OD = new ObjectDispatcher('app');
 OD.module('index', {
   //no __init function (notice double underscore) for top-level: checked if module with current moduleId exists
   //(by default: #module-[moduleId], in this case #module-index)
@@ -87,7 +87,7 @@ OD.module('index', {
   //layout
   testLayout: {
     //guaranteed to be dispatched only once (useful e.g. for SPA layout common code)
-    _times: 1,
+    __once: 1,
 
     testLayout1: function() {
       console.log('testLayout1: yes (only once!)');
@@ -121,6 +121,28 @@ var OD = new ObjectDispatcher('app').dispatch(true);
 ```
 
 Of course, the "run dispatcher" line at the end of the example should be then removed.
+
+
+## Passing parameters
+
+The second parameter of the `dispatch` function will be passed to all `__init` functions:
+
+```js
+OD.dispatch(false, 'parameter');
+//...
+//module definition
+{
+  __init: function(data) {
+    console.log(data);  //outputs "parameter"
+  }
+}
+```
+
+To pass more variables, use an object:
+
+```js
+OD.dispatch(false, { par1: 'val1', par2: 'val2' });
+```
 
 
 ## Options
