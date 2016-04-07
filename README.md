@@ -86,8 +86,8 @@ OD.module('index', {
 
   //layout
   testLayout: {
-    //guaranteed to be dispatched only once (useful e.g. for SPA layout common code)
-    __once: 1,
+    //guaranteed to be dispatched only once (useful e.g. for single page apps layout code, common for all views)
+    __once: true,
 
     testLayout1: function() {
       console.log('testLayout1: yes (only once!)');
