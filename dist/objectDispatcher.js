@@ -34,7 +34,7 @@
     this.settings = deepExtend({}, defaults, options);
 
     if ((typeof id != 'string') || (id.length < 1)) {
-      throw new OdException('module id must be a non-empty string');
+      throw new OdException('app id must be a non-empty string');
     }
     this.id = id;
     this.modules = {};
@@ -140,11 +140,11 @@
 
   //if __init property is set, to start dispatching:
   // - function: must return truthy value
-  // - boolean value: must be true
+  // - boolean: must be true
   // - string: this.isModule(__init) is checked
   //for top-level modules: if __init property is not set, return value of this.isModule(moduleId) is assumed
   //for submodules (lower-level): if __init property is not set, true is assumed
-  //functions and objects with keys starting with "_" are skipped in dispatching
+  //functions and objects with keys not starting with "_" are skipped in dispatching
   //if you provide a __once property with true value, the module will be initialized only once (e.g. for SPA layout code)
   ObjectDispatcher.prototype.dispatch = function(options) {
     var _this = this;
@@ -187,6 +187,8 @@
     else {
       dispatchFnQueued();
     }
+
+    return this;
   }
 
   //performs dispatching
@@ -217,12 +219,13 @@
           obj.__once = 0;
 
         //set system refs
-        if (!obj.__module) {
+        if ((depth > 0) && !obj.__module) {
           obj.__od = _this;
           obj.__module = module;
           obj.__modules = function(moduleId) {
             return _this.module(moduleId);
           }
+
           if (parentModule) {
             obj.__parent = parentModule;
           }
@@ -234,7 +237,8 @@
         for (var key in obj) {
           if (!obj.hasOwnProperty(key) || (key == '__init'))
             continue;
-          if ((typeof key !== 'string') || (key.charAt(0) != '_')) {
+          //console.log(key, (key.charAt(0) === '_'), (key.charAt(1) !== '_'));
+          if ((typeof key !== 'string') || ((depth == 0) || ((key.charAt(0) === '_') && (key.charAt(1) !== '_')))) {
             if (obj[key] && (typeof obj[key] === 'object')) {
               this.dispatchRun(obj[key], data, false, depth + 1, key, depth == 0 ? key : moduleId, module, parentModule);
             }
