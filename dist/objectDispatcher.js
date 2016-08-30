@@ -221,7 +221,7 @@
         //set system refs
         if ((depth > 0) && !obj.__module) {
           obj.__od = _this;
-          obj.__module = module;
+          obj.__module = module || obj;
           obj.__modules = function(moduleId) {
             return _this.module(moduleId);
           }
